@@ -2,6 +2,9 @@
 builder = "dockerfile"
 dockerfilePath = "Dockerfile.prod"
 
+# Build arguments - pass the backend URL
+buildCommand = "docker build --build-arg REACT_APP_URL=$REACT_APP_URL ."
+
 [deploy]
 startCommand = ""
 restartPolicyType = "on_failure"
