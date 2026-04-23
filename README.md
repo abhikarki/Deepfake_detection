@@ -1,5 +1,5 @@
 ### Deepfake Detection System - Temporal Based Approach
-An end-to-end deepfake video detection system on the FaceForensics++ dataset (2,000 videos).
+An end-to-end deepfake video detection system on the FaceForensics++ dataset.
 
 ### System Architecture
 <img width="2365" height="840" alt="system_architecture_stage_3" src="https://github.com/user-attachments/assets/8873efff-4db0-451b-bf9a-6e5a2312af8d" />
