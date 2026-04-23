@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import axios from 'axios';
 import ResultsPage from './ResultsPage';
 
@@ -6,16 +6,29 @@ const API_BASE_URL = process.env.REACT_APP_URL;
 
 function Home() {
   const [uploadedFile, setUploadedFile] = useState(null);
+  const [videoPreviewSrc, setVideoPreviewSrc] = useState(null);
   const [forensicData, setForensicData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [dragOver, setDragOver] = useState(false);
   const fileInputRef = useRef(null);
+  const videoPreviewRef = useRef(null);
 
   const handleFileSelect = (files) => {
     if (files && files.length > 0) {
       setUploadedFile(files[0]);
     }
   };
+
+  // Load video preview using FileReader
+  useEffect(() => {
+    if (uploadedFile && videoPreviewRef.current) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setVideoPreviewSrc(e.target.result);
+      };
+      reader.readAsDataURL(uploadedFile);
+    }
+  }, [uploadedFile]);
 
   const handleDragOver = (e) => {
     e.preventDefault();
@@ -106,8 +119,21 @@ function Home() {
         </button>
         
         {uploadedFile && (
-          <div className="file-list">
-            Selected: {uploadedFile.name} ({(uploadedFile.size / 1024 / 1024).toFixed(2)} MB)
+          <div className="video-preview-section">
+            <div className="video-preview-container">
+              <video 
+                ref={videoPreviewRef}
+                className="video-preview" 
+                controls
+                style={{ width: '100%', height: 'auto', backgroundColor: '#000000', borderRadius: '8px' }}
+                src={videoPreviewSrc}
+              >
+                Your browser does not support the video tag.
+              </video>
+            </div>
+            <div className="file-list">
+              Selected: {uploadedFile.name} ({(uploadedFile.size / 1024 / 1024).toFixed(2)} MB)
+            </div>
           </div>
         )}
 
@@ -123,9 +149,30 @@ function Home() {
       </div>
 
       {loading && (
-        <div className="loading">
-          <div className="spinner"></div>
-          <p style={{ marginTop: '1rem', color: '#666666' }}>Processing video...</p>
+        <div className="loading-overlay">
+          <div className="loading-container">
+            {uploadedFile && videoPreviewSrc && (
+              <div className="video-preview-section">
+                <div className="video-preview-container">
+                  <video 
+                    className="video-preview" 
+                    controls
+                    style={{ width: '100%', height: 'auto', backgroundColor: '#000000', borderRadius: '8px' }}
+                    src={videoPreviewSrc}
+                  >
+                    Your browser does not support the video tag.
+                  </video>
+                </div>
+                <div className="file-list">
+                  Selected: {uploadedFile.name} ({(uploadedFile.size / 1024 / 1024).toFixed(2)} MB)
+                </div>
+              </div>
+            )}
+            <div className="loading">
+              <div className="spinner"></div>
+              <p style={{ marginTop: '1rem', color: '#666666' }}>Processing video...</p>
+            </div>
+          </div>
         </div>
       )}
     </div>
