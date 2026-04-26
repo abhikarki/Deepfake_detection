@@ -1,4 +1,4 @@
-### Deepfake Detection System - Temporal Based Approach
+### Deepfake Video Detection System - Temporal Based Approach
 An end-to-end deepfake video detection system trained on the FaceForensics++ dataset.
 
 ### System Architecture
