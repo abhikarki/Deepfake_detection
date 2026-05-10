@@ -40,7 +40,7 @@ The baseline model (SimpleFrameMLP) takes individual 2048-dimensional frame embe
 | **False Negative Rate** | 7.0%         | 14.0%                  |
 | **False Positive Rate** | 13.0%        | 10.0%                  |
 
-**Key Finding**: The temporal CNN achieves significantly better recall (93% vs 86%), reducing false negatives by half. This is critical for high-stakes applications where missed deepfakes have serious consequences.
+**Key Finding**: The temporal CNN achieves better accuracy (90.00% vs. 88.00%) and significantly better recall (93% vs 86%), reducing false negatives by half. This is critical for high-stakes applications where missed deepfakes have serious consequences.
 
 ### Visualization: AUC-ROC and Confusion Matrix
 
