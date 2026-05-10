@@ -109,11 +109,14 @@ npm start
 
 ## Ethical Considerations
 
-- **False Positives**: Low-confidence predictions flagged for human review
-- **Responsible Deployment**: System designed for transparency and human oversight
-- **Evolving Threat**: Modular architecture enables updates as deepfake techniques advance
-- **Dual-Use Implications**: Open-source availability maximizes legitimate use while acknowledging security considerations
+- **False Positives & Real-World Harm**: System provides confidence scores and flags low-confidence predictions for mandatory human review rather than automatic flagging. By combining automated detection with human oversight, it ensures that no individual is wrongfully accused based solely on machine decisions. The system is designed as a decision support tool, not a replacement for human judgment in high-stakes scenarios.
 
+- **Dataset Bias & Responsible Deployment**: The current system is trained on a subset of the FaceForensics++ dataset. Responsible deployment requires rigorous evaluation across diverse datasets and manipulation methods to ensure the system performs equitably and does not exhibit disparate performance across different demographic groups, video qualities, or manipulation methods. 
+
+- **Evolving Threat Landscape**: Deepfake generation techniques continue to evolve rapidly, particularly with the rise of adversarial methods designed to bypass standard classifiers. No detection system should be treated as a permanent or complete solution. The modular architecture of this system is specifically designed to address this reality; components can be updated independently, so that the system can evolve alongside the manipulation techniques.
+
+- **Dual-Use Implications & Responsible AI**: Making this system open-source maximizes its benefit to legitimate users . However, open-source availability also exposes the system's detection logic to adversaries who may seek to defeat it. This dual-use consideration requires that developers and deployers of such systems maintain awareness of potential misuse.
+  
 ## License
 
 MIT
