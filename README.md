@@ -69,10 +69,10 @@ The AUC-ROC curves demonstrate that the temporal CNN achieves superior distincti
 <table>
   <tr>
     <td width="50%">
-      <img alt="confusion_matrix_temporal_cnn" src="[INSERT_CONFUSION_MATRIX_TEMPORAL_CNN_IMAGE_URL]" width="100%" />
+      <img width="707" height="587" alt="temp_cnn_confusion_matrix" src="https://github.com/user-attachments/assets/480d5ff6-76a5-40e6-b129-2c595c70c9c3" />
     </td>
     <td width="50%">
-      <img alt="confusion_matrix_baseline" src="[INSERT_CONFUSION_MATRIX_BASELINE_IMAGE_URL]" width="100%" />
+      <img width="468" height="390" alt="baseline_confusion_matrix" src="https://github.com/user-attachments/assets/a9034bbf-9e92-4155-9a44-9a3a7c91b9aa" />
     </td>
   </tr>
   <tr>
