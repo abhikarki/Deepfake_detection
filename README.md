@@ -88,6 +88,7 @@ The confusion matrices reveal the trade-offs between the two approaches. While t
 ```bash
 cd backend
 pip install -r requirements.txt
+python main.py
 ```
 
 ### Frontend Setup
@@ -95,17 +96,6 @@ pip install -r requirements.txt
 ```bash
 cd frontend
 npm install
-```
-
-### Running the System
-
-**Development Mode:**
-
-```bash
-cd backend
-python main.py
-
-cd frontend
 npm start
 ```
 
