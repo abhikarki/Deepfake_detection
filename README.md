@@ -44,15 +44,18 @@ The baseline model (SimpleFrameMLP) takes individual 2048-dimensional frame embe
 
 ### Visualization: AUC-ROC and Confusion Matrix
 
-The following visualizations demonstrate the discriminative ability of both models:
+The following graphs demonstrate the discriminative ability of both models:
+
 
 <table>
   <tr>
     <td width="50%">
-      <img alt="auc_roc_temporal_cnn" src="[INSERT_AUC_ROC_TEMPORAL_CNN_IMAGE_URL]" width="100%" />
+      <img width="947" height="707" alt="temp_cnn_roc" src="https://github.com/user-attachments/assets/dadb1a47-2df1-4fab-a511-e62cb9ab8710" />
+      <!-- <img alt="auc_roc_temporal_cnn" src="" width="100%" /> -->
     </td>
     <td width="50%">
-      <img alt="auc_roc_baseline" src="[INSERT_AUC_ROC_BASELINE_IMAGE_URL]" width="100%" />
+      <img width="604" height="470" alt="baseline_roc_pr" src="https://github.com/user-attachments/assets/fc8141a7-e729-4e62-9ca6-98cf7e346418" />
+      <!-- <img alt="auc_roc_baseline" src="[INSERT_AUC_ROC_BASELINE_IMAGE_URL]" width="100%" /> -->
     </td>
   </tr>
   <tr>
