@@ -15,6 +15,10 @@ This project aims to address both challenges through temporal consistency analys
 
 <img width="2365" height="840" alt="system_architecture_stage_3" src="https://github.com/user-attachments/assets/8873efff-4db0-451b-bf9a-6e5a2312af8d" />
 
+## Demo
+https://github.com/user-attachments/assets/9f5c46f4-fe16-41f7-8409-e187e4bbfa56
+
+
 ## Performance Results
 
 ### Dataset
