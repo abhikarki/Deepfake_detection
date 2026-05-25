@@ -140,3 +140,14 @@ def generate_report_pdf(data: dict):
 @app.get("/api/health")
 def health_check():
     return {"status": "healthy", "timestamp": datetime.now().isoformat()}
+
+@app.post("/predict")
+async def predict(file: UploadFile = File(...)):
+    #return mock data for mobile for now
+    return {
+        "prediction": "real" or "deepfake",
+        "confidence": 0.95,
+        "deepfake_probability": 0.05,
+        "real_probability": 0.95,
+        "processing_time": 2.34
+    }
