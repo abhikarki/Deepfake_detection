@@ -8,7 +8,7 @@ import {
   ScrollView,
 } from 'react-native';
 import { VideoUploader } from '../components/VideoUploader';
-import { uploadVideo } from '../api/apiClient';
+import { uploadVideo, getMockAnalysisData } from '../api/apiClient';
 import { colors } from '../assets/colors';
 
 export const HomeScreen = ({ navigation }) => {
@@ -34,17 +34,17 @@ export const HomeScreen = ({ navigation }) => {
       const results = await uploadVideo(selectedVideoUri);
       
       // Navigate to results screen with the data
-      navigation.navigate('Results', { results });
+      navigation.navigate('Results', { results, isSample: false });
+      setIsLoading(false);
     } catch (err) {
-      const errorMessage =
-        err.response?.data?.detail ||
-        err.message ||
-        'Failed to analyze video. Make sure backend is running.';
+      const mockResults = getMockAnalysisData();
+      const errorMessage = 'Network error';
       
       setError(errorMessage);
-      Alert.alert('Analysis Failed', errorMessage);
-    } finally {
       setIsLoading(false);
+      
+      // Navigate directly to results with sample data
+      navigation.navigate('Results', { results: mockResults, isSample: true });
     }
   };
 

@@ -8,30 +8,68 @@ import {
 } from 'react-native';
 import { colors } from '../assets/colors';
 
-export const ResultsDisplay = ({ results, onReset }) => {
+export const ResultsDisplay = ({ results, onReset, isSample }) => {
   if (!results) {
-    return null;
+    return (
+      <View style={styles.emptyContainer}>
+        <Text style={styles.emptyText}>No results to display</Text>
+      </View>
+    );
   }
 
-  const isPredictionAvailable = results.prediction !== undefined;
   const isDeepfake = results.prediction === 'deepfake';
   const confidence = (results.confidence * 100).toFixed(2);
+  const verdict = results.verdict || (isDeepfake ? 'LIKELY MANIPULATED' : 'AUTHENTIC');
+  const overallProb = results.overall_probability ? (results.overall_probability * 100).toFixed(1) : confidence;
+  const peakScore = results.highest_frame_score ? (results.highest_frame_score * 100).toFixed(1) : 'N/A';
+  const temporalInstability = results.instability_detected ? 'Yes' : 'No';
+  const framesFlagged = results.num_frames_fake ? `${results.num_frames_fake}/${results.num_frames_analyzed}` : 'N/A';
 
   return (
     <ScrollView style={styles.container}>
+      {isSample && (
+        <View style={styles.sampleBadge}>
+          <Text style={styles.sampleBadgeText}>SAMPLE OUTPUT</Text>
+        </View>
+      )}
+
+      {/* Verdict Card */}
       <View
         style={[
-          styles.resultCard,
+          styles.verdictCard,
           { backgroundColor: isDeepfake ? colors.deepfake : colors.real },
         ]}
       >
-        <Text style={styles.predictionLabel}>CLASSIFICATION</Text>
-        <Text style={styles.prediction}>
-          {isDeepfake ? 'DEEPFAKE' : 'REAL'}
-        </Text>
-        <Text style={styles.confidence}>{confidence}% Confidence</Text>
+        <Text style={styles.verdictLabel}>CLASSIFICATION</Text>
+        <Text style={styles.verdict}>{verdict}</Text>
+        <Text style={styles.probability}>{overallProb}% Probability</Text>
       </View>
 
+      {/* Metrics Grid */}
+      <View style={styles.metricsGrid}>
+        <View style={styles.metricCard}>
+          <Text style={styles.metricLabel}>Most Suspicious Frame</Text>
+          <Text style={styles.metricValue}>
+            {results.most_suspicious_frame !== undefined ? `Frame ${results.most_suspicious_frame}` : 'N/A'}
+          </Text>
+        </View>
+        <View style={styles.metricCard}>
+          <Text style={styles.metricLabel}>Peak Score</Text>
+          <Text style={styles.metricValue}>{peakScore}%</Text>
+        </View>
+        <View style={styles.metricCard}>
+          <Text style={styles.metricLabel}>Temporal Instability</Text>
+          <Text style={[styles.metricValue, { color: results.instability_detected ? '#c62828' : '#2e7d32' }]}>
+            {temporalInstability}
+          </Text>
+        </View>
+        <View style={styles.metricCard}>
+          <Text style={styles.metricLabel}>Frames Flagged</Text>
+          <Text style={styles.metricValue}>{framesFlagged}</Text>
+        </View>
+      </View>
+
+      {/* Detection Details Card */}
       <View style={styles.detailsCard}>
         <Text style={styles.detailsTitle}>Detection Details</Text>
 
@@ -75,12 +113,24 @@ export const ResultsDisplay = ({ results, onReset }) => {
         )}
       </View>
 
+      {/* Flagged Concerns */}
+      {results.flagged_reasons && results.flagged_reasons.length > 0 && (
+        <View style={styles.flaggedCard}>
+          <Text style={styles.flaggedTitle}>Flagged Concerns</Text>
+          {results.flagged_reasons.map((reason, idx) => (
+            <View key={idx} style={styles.flaggedItem}>
+              <Text style={styles.flaggedNumber}>{idx + 1}.</Text>
+              <Text style={styles.flaggedReason}>{reason}</Text>
+            </View>
+          ))}
+        </View>
+      )}
+
+      {/* Warning Card */}
       <View style={styles.warningCard}>
-        <Text style={styles.warningTitle}> Important Notice</Text>
+        <Text style={styles.warningTitle}>⚠ Important Notice</Text>
         <Text style={styles.warningText}>
-          This is an AI-powered detection system and should not be considered
-          as definitive proof. Always combine automated detection with human
-          expert review for high-stakes applications.
+          This is an AI-powered detection system and should not be considered as definitive proof. Always combine automated detection with human expert review for high-stakes applications.
         </Text>
       </View>
 
@@ -97,7 +147,31 @@ const styles = StyleSheet.create({
     paddingVertical: 20,
     paddingHorizontal: 15,
   },
-  resultCard: {
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  emptyText: {
+    fontSize: 16,
+    color: colors.textLight,
+  },
+  sampleBadge: {
+    backgroundColor: '#E3F2FD',
+    borderLeftWidth: 4,
+    borderLeftColor: '#2196F3',
+    paddingVertical: 12,
+    paddingHorizontal: 14,
+    marginBottom: 16,
+    borderRadius: 8,
+  },
+  sampleBadgeText: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#1565C0',
+    letterSpacing: 0.5,
+  },
+  verdictCard: {
     borderRadius: 15,
     padding: 25,
     alignItems: 'center',
@@ -108,22 +182,48 @@ const styles = StyleSheet.create({
     shadowRadius: 3.84,
     elevation: 5,
   },
-  predictionLabel: {
+  verdictLabel: {
     fontSize: 12,
     fontWeight: '700',
     color: '#FFFFFF',
     letterSpacing: 1,
   },
-  prediction: {
+  verdict: {
     fontSize: 32,
     fontWeight: '700',
     color: '#FFFFFF',
     marginVertical: 10,
   },
-  confidence: {
+  probability: {
     fontSize: 18,
     fontWeight: '600',
     color: '#FFFFFF',
+  },
+  metricsGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+    marginBottom: 20,
+    gap: 12,
+  },
+  metricCard: {
+    backgroundColor: colors.surface,
+    borderRadius: 12,
+    padding: 14,
+    width: '48%',
+    borderLeftWidth: 4,
+    borderLeftColor: colors.primary,
+  },
+  metricLabel: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: colors.textLight,
+    marginBottom: 6,
+  },
+  metricValue: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: colors.text,
   },
   detailsCard: {
     backgroundColor: colors.surface,
@@ -156,6 +256,36 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '600',
     color: colors.text,
+  },
+  flaggedCard: {
+    backgroundColor: '#FFE5E5',
+    borderRadius: 12,
+    padding: 14,
+    marginBottom: 20,
+    borderLeftWidth: 4,
+    borderLeftColor: '#c62828',
+  },
+  flaggedTitle: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#c62828',
+    marginBottom: 10,
+  },
+  flaggedItem: {
+    flexDirection: 'row',
+    marginBottom: 8,
+  },
+  flaggedNumber: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: '#c62828',
+    marginRight: 8,
+  },
+  flaggedReason: {
+    fontSize: 13,
+    color: '#c62828',
+    flex: 1,
+    lineHeight: 20,
   },
   warningCard: {
     backgroundColor: '#FFF3CD',
