@@ -9,20 +9,21 @@ const apiClient = axios.create({
 
 // Mock data for testing when backend is unavailable
 export const getMockAnalysisData = () => {
-    // Generate frame probabilities - array of probabilities for each frame
-    const generateFrameProbs = (trend, length = 150) => {
+    // Generate window probabilities (one probability per 5-frame window)
+    // With 150 frames, stride 5 = 30 windows total
+    const generateWindowProbs = (trend, numWindows = 30) => {
         const probs = [];
-        for (let i = 0; i < length; i++) {
+        for (let i = 0; i < numWindows; i++) {
             let prob;
             if (trend === 'deepfake') {
                 // High probability with some variation
-                prob = 0.6 + Math.random() * 0.35 + (i % 20) * 0.01;
+                prob = 0.65 + Math.random() * 0.3 + (i % 10) * 0.01;
             } else if (trend === 'real') {
                 // Low probability with some noise
-                prob = 0.1 + Math.random() * 0.25 + (Math.sin(i * 0.2) * 0.1);
+                prob = 0.1 + Math.random() * 0.2 + (Math.sin(i * 0.3) * 0.08);
             } else {
                 // Medium probability
-                prob = 0.4 + Math.random() * 0.3 + (Math.cos(i * 0.15) * 0.15);
+                prob = 0.45 + Math.random() * 0.25 + (Math.cos(i * 0.2) * 0.12);
             }
             probs.push(Math.min(1.0, Math.max(0, prob)));
         }
@@ -43,7 +44,7 @@ export const getMockAnalysisData = () => {
             instability_detected: true,
             num_frames_analyzed: 150,
             num_frames_fake: 87,
-            frame_probabilities: generateFrameProbs('deepfake'),
+            frame_probabilities: generateWindowProbs('deepfake', 30),
             flagged_reasons: ['Inconsistent eye movement', 'Temporal artifacts detected', 'Unnatural head rotation']
         },
         {
@@ -59,7 +60,7 @@ export const getMockAnalysisData = () => {
             instability_detected: false,
             num_frames_analyzed: 150,
             num_frames_fake: 9,
-            frame_probabilities: generateFrameProbs('real'),
+            frame_probabilities: generateWindowProbs('real', 30),
             flagged_reasons: []
         },
         {
@@ -75,7 +76,7 @@ export const getMockAnalysisData = () => {
             instability_detected: true,
             num_frames_analyzed: 150,
             num_frames_fake: 72,
-            frame_probabilities: generateFrameProbs('medium'),
+            frame_probabilities: generateWindowProbs('medium', 30),
             flagged_reasons: ['Facial feature distortion', 'Blinking pattern anomaly']
         }
     ];

@@ -8,33 +8,29 @@ import {
 } from 'react-native';
 import { colors } from '../assets/colors';
 
-// Calculate sliding windows from frame probabilities
-const calculateWindows = (frameProbs) => {
-  if (!frameProbs || frameProbs.length === 0) return [];
+// Process window probabilities into window objects
+const processWindowData = (windowProbs) => {
+  if (!windowProbs || windowProbs.length === 0) return [];
   
   const fps = 10;
   const windowSize = 5;
   const stride = 5;
   const windows = [];
   
-  let windowStart = 0;
-  while (windowStart < frameProbs.length) {
-    const windowEnd = Math.min(windowStart + windowSize, frameProbs.length);
-    const windowProbs = frameProbs.slice(windowStart, windowEnd);
-    const maxProb = Math.max(...windowProbs);
-    const avgProb = windowProbs.reduce((a, b) => a + b, 0) / windowProbs.length;
+  windowProbs.forEach((prob, idx) => {
+    const startFrame = idx * stride;
+    const endFrame = startFrame + windowSize;
+    const startTime = startFrame / fps;
     
     windows.push({
-      startFrame: windowStart,
-      endFrame: windowEnd,
-      maxProb: maxProb,
-      avgProb: avgProb,
-      startTime: windowStart / fps,
-      isSuspicious: maxProb >= 0.5,
+      windowIndex: idx,
+      startFrame: startFrame,
+      endFrame: endFrame,
+      probability: prob,
+      startTime: startTime,
+      isSuspicious: prob >= 0.5,
     });
-    
-    windowStart += stride;
-  }
+  });
   
   return windows;
 };
@@ -43,14 +39,13 @@ const calculateWindows = (frameProbs) => {
 const ProbabilityChart = ({ windows }) => {
   if (!windows || windows.length === 0) return null;
   
-  const maxProb = Math.max(...windows.map(w => w.maxProb), 0.5);
+  const maxProb = Math.max(...windows.map(w => w.probability), 0.5);
   const chartHeight = 180;
-  const barSpacing = 100 / windows.length;
   
   return (
     <View style={styles.chartContainer}>
       <View style={styles.chartHeader}>
-        <Text style={styles.chartTitle}>Window Analysis</Text>
+        <Text style={styles.chartTitle}>Frame Window Probabilities</Text>
       </View>
       
       <View style={styles.chartArea}>
@@ -62,7 +57,7 @@ const ProbabilityChart = ({ windows }) => {
         
         <View style={styles.barsContainer}>
           {windows.map((window, idx) => {
-            const barHeight = (window.maxProb / maxProb) * chartHeight;
+            const barHeight = (window.probability / maxProb) * chartHeight;
             const width = (90 / windows.length);
             
             return (
@@ -77,7 +72,7 @@ const ProbabilityChart = ({ windows }) => {
                   ]}
                 />
                 <Text style={styles.barLabel}>
-                  {(window.maxProb * 100).toFixed(0)}%
+                  {(window.probability * 100).toFixed(0)}%
                 </Text>
               </View>
             );
@@ -119,12 +114,12 @@ export const ResultsDisplay = ({ results, onReset, isSample }) => {
   const peakScore = results.highest_frame_score ? (results.highest_frame_score * 100).toFixed(1) : 'N/A';
   const temporalInstability = results.instability_detected ? 'Yes' : 'No';
   
-  // Calculate windows if frame probabilities are available
+  // Calculate windows from window probabilities
   const windows = useMemo(() => {
-    return calculateWindows(results.frame_probabilities);
+    return processWindowData(results.frame_probabilities);
   }, [results.frame_probabilities]);
   
-  // Count suspicious windows
+  // Count suspicious windows (probability >= 0.5)
   const suspiciousWindows = windows.filter(w => w.isSuspicious).length;
   const windowsFlagged = `${suspiciousWindows}/${windows.length}`;
 
@@ -158,7 +153,7 @@ export const ResultsDisplay = ({ results, onReset, isSample }) => {
         <View style={styles.metricCard}>
           <Text style={styles.metricLabel}>Most Suspicious Window</Text>
           <Text style={styles.metricValue}>
-            {results.most_suspicious_frame !== undefined ? `Frame ${results.most_suspicious_frame}` : 'N/A'}
+            {results.most_suspicious_frame !== undefined ? `Frames ${results.most_suspicious_frame}-${results.most_suspicious_frame + 4}` : 'N/A'}
           </Text>
         </View>
         <View style={styles.metricCard}>
