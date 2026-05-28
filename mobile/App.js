@@ -1,8 +1,10 @@
 import React from 'react';
+import { Text } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { HomeScreen } from './screens/HomeScreen';
 import { ResultsScreen } from './screens/ResultsScreen';
+import { AboutScreen } from './screens/AboutScreen';
 import { colors } from './assets/colors';
 
 const Tab = createBottomTabNavigator();
@@ -25,17 +27,17 @@ export default function App() {
             backgroundColor: colors.background,
             borderTopColor: '#E0E0E0',
             borderTopWidth: 1,
-            paddingBottom: 5,
+            paddingBottom: 8,
             paddingTop: 8,
-            height: 60,
+            height: 50,
           },
           tabBarLabelStyle: {
-            fontSize: 11,
+            fontSize: 12,
             fontWeight: '600',
-            marginTop: -5,
+            marginTop: 0,
           },
           tabBarIconStyle: {
-            marginBottom: 5,
+            display: 'none',
           },
         })}
       >
@@ -44,9 +46,6 @@ export default function App() {
           component={HomeScreen}
           options={{
             tabBarLabel: 'Home',
-            tabBarIcon: ({ color, size }) => (
-              <Text style={{ fontSize: 24 }}></Text>
-            ),
           }}
         />
         <Tab.Screen
@@ -54,14 +53,16 @@ export default function App() {
           component={ResultsScreen}
           options={{
             tabBarLabel: 'Results',
-            tabBarIcon: ({ color, size }) => (
-              <Text style={{ fontSize: 24 }}></Text>
-            ),
+          }}
+        />
+        <Tab.Screen
+          name="About"
+          component={AboutScreen}
+          options={{
+            tabBarLabel: 'About',
           }}
         />
       </Tab.Navigator>
     </NavigationContainer>
   );
 }
-
-import { Text } from 'react-native';
