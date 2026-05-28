@@ -51,7 +51,7 @@ export const HomeScreen = ({ navigation }) => {
   return (
     <ScrollView style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>Upload & Analyze</Text>
+        <Text style={styles.headerTitle}>Deepfake Detector</Text>
         <Text style={styles.headerSubtitle}>Select a video to detect deepfakes</Text>
       </View>
 
@@ -78,7 +78,7 @@ export const HomeScreen = ({ navigation }) => {
       </TouchableOpacity>
 
       <View style={styles.infoBox}>
-        <Text style={styles.infoTitle}>📋 Requirements</Text>
+        <Text style={styles.infoTitle}> Requirements</Text>
         <Text style={styles.infoText}>• Video format: MP4, MOV</Text>
         <Text style={styles.infoText}>• Recommended: 5-30 seconds</Text>
         <Text style={styles.infoText}>• Must contain a face</Text>
@@ -86,7 +86,7 @@ export const HomeScreen = ({ navigation }) => {
       </View>
 
       <View style={styles.tipsBox}>
-        <Text style={styles.tipsTitle}>💡 Tips for Best Results</Text>
+        <Text style={styles.tipsTitle}> Tips for Best Results</Text>
         <Text style={styles.tipText}>
           1. Ensure good lighting and clear face visibility
         </Text>
@@ -174,8 +174,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     backgroundColor: colors.surface,
     borderRadius: 12,
-    borderLeftWidth: 4,
-    borderLeftColor: colors.primary,
   },
   infoTitle: {
     fontSize: 14,
@@ -196,8 +194,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     backgroundColor: '#F0F7FF',
     borderRadius: 12,
-    borderLeftWidth: 4,
-    borderLeftColor: colors.secondary,
   },
   tipsTitle: {
     fontSize: 14,

@@ -45,7 +45,7 @@ export default function App() {
           options={{
             tabBarLabel: 'Home',
             tabBarIcon: ({ color, size }) => (
-              <Text style={{ fontSize: 24 }}>🏠</Text>
+              <Text style={{ fontSize: 24 }}></Text>
             ),
           }}
         />
@@ -55,7 +55,7 @@ export default function App() {
           options={{
             tabBarLabel: 'Results',
             tabBarIcon: ({ color, size }) => (
-              <Text style={{ fontSize: 24 }}>📊</Text>
+              <Text style={{ fontSize: 24 }}></Text>
             ),
           }}
         />
