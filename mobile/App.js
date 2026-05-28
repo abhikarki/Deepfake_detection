@@ -1,5 +1,4 @@
 import React from 'react';
-import { Text } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { HomeScreen } from './screens/HomeScreen';
@@ -22,19 +21,25 @@ export default function App() {
             fontWeight: '700',
           },
           tabBarActiveTintColor: colors.primary,
-          tabBarInactiveTintColor: colors.textLight,
+          tabBarInactiveTintColor: '#999999',
           tabBarStyle: {
             backgroundColor: colors.background,
             borderTopColor: '#E0E0E0',
             borderTopWidth: 1,
-            paddingBottom: 8,
-            paddingTop: 8,
-            height: 50,
+            paddingBottom: 0,
+            paddingTop: 0,
+            height: 56,
+            elevation: 8,
+            shadowColor: '#000',
+            shadowOffset: { width: 0, height: -1 },
+            shadowOpacity: 0.1,
+            shadowRadius: 2,
           },
           tabBarLabelStyle: {
             fontSize: 12,
             fontWeight: '600',
-            marginTop: 0,
+            marginBottom: 8,
+            marginTop: 8,
           },
           tabBarIconStyle: {
             display: 'none',

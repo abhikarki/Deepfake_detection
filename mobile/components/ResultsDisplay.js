@@ -42,13 +42,13 @@ export const ResultsDisplay = ({ results, onReset, isSample }) => {
       >
         <Text style={styles.verdictLabel}>CLASSIFICATION</Text>
         <Text style={styles.verdict}>{verdict}</Text>
-        <Text style={styles.probability}>{overallProb}% Probability</Text>
+        <Text style={styles.probability}>{overallProb}% Deepfake Probability</Text>
       </View>
 
       {/* Metrics Grid */}
       <View style={styles.metricsGrid}>
         <View style={styles.metricCard}>
-          <Text style={styles.metricLabel}>Most Suspicious Frame</Text>
+          <Text style={styles.metricLabel}>Most Suspicious Frame window</Text>
           <Text style={styles.metricValue}>
             {results.most_suspicious_frame !== undefined ? `Frame ${results.most_suspicious_frame}` : 'N/A'}
           </Text>
@@ -211,8 +211,6 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     padding: 14,
     width: '48%',
-    borderLeftWidth: 4,
-    borderLeftColor: colors.primary,
   },
   metricLabel: {
     fontSize: 12,
@@ -292,8 +290,6 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     padding: 15,
     marginBottom: 20,
-    borderLeftWidth: 4,
-    borderLeftColor: '#FFC107',
   },
   warningTitle: {
     fontSize: 14,

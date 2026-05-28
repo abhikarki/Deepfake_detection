@@ -8,5 +8,5 @@ export const colors = {
   text: '#212121',
   textLight: '#757575',
   deepfake: '#FF6B6B',
-  real: '#51CF66',
+  real: '#4cb65e',
 };
