@@ -7,6 +7,6 @@ export const colors = {
   success: '#4CAF50',
   text: '#212121',
   textLight: '#757575',
-  deepfake: '#FF6B6B',
-  real: '#4cb65e',
+  deepfake: '#c37373',
+  real: '#7bd48a',
 };

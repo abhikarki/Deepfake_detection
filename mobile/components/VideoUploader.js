@@ -41,7 +41,7 @@ export const VideoUploader = ({ onVideoSelected, isLoading }) => {
           <ActivityIndicator size="large" color={colors.primary} />
         ) : (
           <>
-            <Text style={styles.uploadIcon}>📹</Text>
+            <Text style={styles.uploadIcon}></Text>
             <Text style={styles.uploadText}>
               {selectedVideo ? 'Change Video' : 'Select Video'}
             </Text>

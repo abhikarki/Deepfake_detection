@@ -158,8 +158,6 @@ const styles = StyleSheet.create({
   },
   sampleBadge: {
     backgroundColor: '#E3F2FD',
-    borderLeftWidth: 4,
-    borderLeftColor: '#2196F3',
     paddingVertical: 12,
     paddingHorizontal: 14,
     marginBottom: 16,
@@ -260,8 +258,6 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     padding: 14,
     marginBottom: 20,
-    borderLeftWidth: 4,
-    borderLeftColor: '#c62828',
   },
   flaggedTitle: {
     fontSize: 14,
