@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import {
   View,
   Text,
@@ -7,6 +7,101 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import { colors } from '../assets/colors';
+
+// Calculate sliding windows from frame probabilities
+const calculateWindows = (frameProbs) => {
+  if (!frameProbs || frameProbs.length === 0) return [];
+  
+  const fps = 10;
+  const windowSize = 5;
+  const stride = 5;
+  const windows = [];
+  
+  let windowStart = 0;
+  while (windowStart < frameProbs.length) {
+    const windowEnd = Math.min(windowStart + windowSize, frameProbs.length);
+    const windowProbs = frameProbs.slice(windowStart, windowEnd);
+    const maxProb = Math.max(...windowProbs);
+    const avgProb = windowProbs.reduce((a, b) => a + b, 0) / windowProbs.length;
+    
+    windows.push({
+      startFrame: windowStart,
+      endFrame: windowEnd,
+      maxProb: maxProb,
+      avgProb: avgProb,
+      startTime: windowStart / fps,
+      isSuspicious: maxProb >= 0.5,
+    });
+    
+    windowStart += stride;
+  }
+  
+  return windows;
+};
+
+// Simple bar chart component
+const ProbabilityChart = ({ windows }) => {
+  if (!windows || windows.length === 0) return null;
+  
+  const maxProb = Math.max(...windows.map(w => w.maxProb), 0.5);
+  const chartHeight = 180;
+  const barSpacing = 100 / windows.length;
+  
+  return (
+    <View style={styles.chartContainer}>
+      <View style={styles.chartHeader}>
+        <Text style={styles.chartTitle}>Window Analysis</Text>
+      </View>
+      
+      <View style={styles.chartArea}>
+        <View style={styles.yAxisLabels}>
+          <Text style={styles.yAxisLabel}>100%</Text>
+          <Text style={styles.yAxisLabel}>50%</Text>
+          <Text style={styles.yAxisLabel}>0%</Text>
+        </View>
+        
+        <View style={styles.barsContainer}>
+          {windows.map((window, idx) => {
+            const barHeight = (window.maxProb / maxProb) * chartHeight;
+            const width = (90 / windows.length);
+            
+            return (
+              <View key={idx} style={[styles.barWrapper, { width: `${width}%` }]}>
+                <View
+                  style={[
+                    styles.bar,
+                    {
+                      height: barHeight,
+                      backgroundColor: window.isSuspicious ? '#e53935' : '#1976d2',
+                    },
+                  ]}
+                />
+                <Text style={styles.barLabel}>
+                  {(window.maxProb * 100).toFixed(0)}%
+                </Text>
+              </View>
+            );
+          })}
+        </View>
+        
+        {/* Threshold line */}
+        <View style={styles.thresholdLine} />
+        <Text style={styles.thresholdLabel}>50% threshold</Text>
+      </View>
+      
+      <View style={styles.chartLegend}>
+        <View style={styles.legendItem}>
+          <View style={[styles.legendBox, { backgroundColor: '#1976d2' }]} />
+          <Text style={styles.legendText}>Authentic</Text>
+        </View>
+        <View style={styles.legendItem}>
+          <View style={[styles.legendBox, { backgroundColor: '#e53935' }]} />
+          <Text style={styles.legendText}>Suspicious</Text>
+        </View>
+      </View>
+    </View>
+  );
+};
 
 export const ResultsDisplay = ({ results, onReset, isSample }) => {
   if (!results) {
@@ -23,7 +118,15 @@ export const ResultsDisplay = ({ results, onReset, isSample }) => {
   const overallProb = results.overall_probability ? (results.overall_probability * 100).toFixed(1) : confidence;
   const peakScore = results.highest_frame_score ? (results.highest_frame_score * 100).toFixed(1) : 'N/A';
   const temporalInstability = results.instability_detected ? 'Yes' : 'No';
-  const framesFlagged = results.num_frames_fake ? `${results.num_frames_fake}/${results.num_frames_analyzed}` : 'N/A';
+  
+  // Calculate windows if frame probabilities are available
+  const windows = useMemo(() => {
+    return calculateWindows(results.frame_probabilities);
+  }, [results.frame_probabilities]);
+  
+  // Count suspicious windows
+  const suspiciousWindows = windows.filter(w => w.isSuspicious).length;
+  const windowsFlagged = `${suspiciousWindows}/${windows.length}`;
 
   return (
     <ScrollView style={styles.container}>
@@ -45,10 +148,15 @@ export const ResultsDisplay = ({ results, onReset, isSample }) => {
         <Text style={styles.probability}>{overallProb}% Deepfake Probability</Text>
       </View>
 
+      {/* Probability Chart */}
+      {results.frame_probabilities && results.frame_probabilities.length > 0 && (
+        <ProbabilityChart windows={windows} />
+      )}
+
       {/* Metrics Grid */}
       <View style={styles.metricsGrid}>
         <View style={styles.metricCard}>
-          <Text style={styles.metricLabel}>Most Suspicious Frame window</Text>
+          <Text style={styles.metricLabel}>Most Suspicious Window</Text>
           <Text style={styles.metricValue}>
             {results.most_suspicious_frame !== undefined ? `Frame ${results.most_suspicious_frame}` : 'N/A'}
           </Text>
@@ -64,8 +172,8 @@ export const ResultsDisplay = ({ results, onReset, isSample }) => {
           </Text>
         </View>
         <View style={styles.metricCard}>
-          <Text style={styles.metricLabel}>Frames Flagged</Text>
-          <Text style={styles.metricValue}>{framesFlagged}</Text>
+          <Text style={styles.metricLabel}>Windows Flagged</Text>
+          <Text style={styles.metricValue}>{windowsFlagged}</Text>
         </View>
       </View>
 
@@ -158,6 +266,8 @@ const styles = StyleSheet.create({
   },
   sampleBadge: {
     backgroundColor: '#E3F2FD',
+    borderLeftWidth: 4,
+    borderLeftColor: '#2196F3',
     paddingVertical: 12,
     paddingHorizontal: 14,
     marginBottom: 16,
@@ -168,6 +278,102 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: '#1565C0',
     letterSpacing: 0.5,
+  },
+  chartContainer: {
+    backgroundColor: colors.surface,
+    borderRadius: 12,
+    padding: 14,
+    marginBottom: 20,
+    borderLeftWidth: 4,
+    borderLeftColor: colors.primary,
+  },
+  chartHeader: {
+    marginBottom: 12,
+  },
+  chartTitle: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: colors.text,
+  },
+  chartArea: {
+    flexDirection: 'row',
+    height: 200,
+    marginBottom: 12,
+    alignItems: 'flex-end',
+    position: 'relative',
+  },
+  yAxisLabels: {
+    width: 35,
+    justifyContent: 'space-between',
+    paddingRight: 8,
+  },
+  yAxisLabel: {
+    fontSize: 10,
+    color: '#666666',
+    fontWeight: '500',
+  },
+  barsContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+    justifyContent: 'space-around',
+    paddingHorizontal: 8,
+    borderLeftWidth: 1,
+    borderBottomWidth: 1,
+    borderLeftColor: '#ccc',
+    borderBottomColor: '#ccc',
+    position: 'relative',
+  },
+  barWrapper: {
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+    height: '100%',
+  },
+  bar: {
+    width: '80%',
+    borderRadius: 2,
+  },
+  barLabel: {
+    fontSize: 8,
+    color: '#666666',
+    marginTop: 4,
+    fontWeight: '600',
+  },
+  thresholdLine: {
+    position: 'absolute',
+    bottom: '50%',
+    left: 0,
+    right: 0,
+    height: 1,
+    backgroundColor: '#ff9800',
+    opacity: 0.6,
+  },
+  thresholdLabel: {
+    position: 'absolute',
+    top: '50%',
+    right: 0,
+    fontSize: 9,
+    color: '#ff9800',
+    fontWeight: '600',
+  },
+  chartLegend: {
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    gap: 16,
+  },
+  legendItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  legendBox: {
+    width: 12,
+    height: 12,
+    borderRadius: 2,
+    marginRight: 6,
+  },
+  legendText: {
+    fontSize: 11,
+    color: colors.textLight,
   },
   verdictCard: {
     borderRadius: 15,
