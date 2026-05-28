@@ -2,7 +2,6 @@ import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { HomeScreen } from './screens/HomeScreen';
-import { UploadScreen } from './screens/UploadScreen';
 import { ResultsScreen } from './screens/ResultsScreen';
 import { colors } from './assets/colors';
 
@@ -47,16 +46,6 @@ export default function App() {
             tabBarLabel: 'Home',
             tabBarIcon: ({ color, size }) => (
               <Text style={{ fontSize: 24 }}>🏠</Text>
-            ),
-          }}
-        />
-        <Tab.Screen
-          name="Upload"
-          component={UploadScreen}
-          options={{
-            tabBarLabel: 'Analyze',
-            tabBarIcon: ({ color, size }) => (
-              <Text style={{ fontSize: 24 }}>📹</Text>
             ),
           }}
         />
